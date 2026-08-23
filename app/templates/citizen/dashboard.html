@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Citizen Dashboard | Digital Citizen Portal{% endblock %}
+
+{% block content %}
+<div class="bg-navy text-white py-4 mb-4">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-gauge-high text-warning me-2"></i> Welcome back, {{ current_user.name }}!</h1>
+                <p class="text-white-50 mb-0">Citizen Dossiers & Digital Certificate Services Dashboard</p>
+            </div>
+            <div>
+                <a href="{{ url_for('main.services') }}" class="btn btn-warning fw-bold shadow-sm">
+                    <i class="fa-solid fa-plus me-1"></i> Apply for New Service
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <!-- Unread Notification Alert Banner -->
+    {% if unread_notifications %}
+    <div class="alert alert-warning alert-dismissible fade show border-start border-warning border-4 shadow-sm mb-4" role="alert">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <strong class="text-dark"><i class="fa-solid fa-bell me-2"></i> You have {{ unread_notifications|length }} unread notification(s)!</strong>
+                <span class="text-dark fs-7 d-block">{{ unread_notifications[0].title }}: {{ unread_notifications[0].message[:90] }}...</span>
+            </div>
+            <a href="{{ url_for('citizen.notifications') }}" class="btn btn-sm btn-navy fw-semibold">View Inbox</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Metrics Summary Cards Grid -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-2">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white text-center h-100">
+                <span class="text-muted fs-8 fw-semibold text-uppercase">Total Dossiers</span>
+                <h3 class="fw-bold text-navy mb-0 mt-1">{{ total_apps }}</h3>
+            </div>
+        </div>
+        <div class="col-6 col-lg-2">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white text-center h-100 border-start border-info border-4">
+                <span class="text-muted fs-8 fw-semibold text-uppercase">Submitted</span>
+                <h3 class="fw-bold text-info mb-0 mt-1">{{ pending_apps }}</h3>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white text-center h-100 border-start border-warning border-4">
+                <span class="text-muted fs-8 fw-semibold text-uppercase">Under Officer Review</span>
+                <h3 class="fw-bold text-warning mb-0 mt-1">{{ review_apps }}</h3>
+            </div>
+        </div>
+        <div class="col-6 col-lg-2">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white text-center h-100 border-start border-success border-4">
+                <span class="text-muted fs-8 fw-semibold text-uppercase">Approved</span>
+                <h3 class="fw-bold text-success mb-0 mt-1">{{ approved_apps }}</h3>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white text-center h-100 border-start border-danger border-4">
+                <span class="text-muted fs-8 fw-semibold text-uppercase">Rejected</span>
+                <h3 class="fw-bold text-danger mb-0 mt-1">{{ rejected_apps }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Action Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <a href="{{ url_for('main.services') }}" class="card border-0 shadow-sm rounded-3 p-3 bg-white text-decoration-none text-navy hover-lift">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-circle bg-navy text-warning rounded-circle d-flex align-items-center justify-content-center" style="width:45px; height:45px;">
+                        <i class="fa-solid fa-file-signature"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0">Apply for Service</h6>
+                        <small class="text-muted">Browse directory</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('main.track') }}" class="card border-0 shadow-sm rounded-3 p-3 bg-white text-decoration-none text-navy hover-lift">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-circle bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width:45px; height:45px;">
+                        <i class="fa-solid fa-route"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0">Track Application</h6>
+                        <small class="text-muted">Search by ID</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('main.grievance') }}" class="card border-0 shadow-sm rounded-3 p-3 bg-white text-decoration-none text-navy hover-lift">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-circle bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center" style="width:45px; height:45px;">
+                        <i class="fa-solid fa-comment-dots"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0">Submit Grievance</h6>
+                        <small class="text-muted">File complaint</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('citizen.notifications') }}" class="card border-0 shadow-sm rounded-3 p-3 bg-white text-decoration-none text-navy hover-lift">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-circle bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width:45px; height:45px;">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-0">Alert Inbox</h6>
+                        <small class="text-muted">Check notifications</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Applications Table Card -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-folder-open text-primary me-2"></i> My Application Dossiers</h5>
+            <span class="badge bg-secondary-subtle text-dark fs-7">{{ applications|length }} Applications</span>
+        </div>
+        <div class="card-body p-0">
+            {% if applications %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light fs-7 text-uppercase text-muted">
+                        <tr>
+                            <th class="ps-4">Application ID</th>
+                            <th>Service Requested</th>
+                            <th>Submitted Date</th>
+                            <th>Status Stage</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="fs-7">
+                        {% for app in applications %}
+                        <tr>
+                            <td class="ps-4">
+                                <span class="fw-bold text-primary font-monospace">{{ app.application_number }}</span>
+                            </td>
+                            <td>
+                                <strong>{{ app.service.name }}</strong><br>
+                                <small class="text-muted">{{ app.service.category }}</small>
+                            </td>
+                            <td>{{ app.created_at.strftime('%d-%b-%Y, %I:%M %p') }}</td>
+                            <td>
+                                {% if app.status == 'submitted' %}
+                                    <span class="badge bg-info text-dark">Submitted</span>
+                                {% elif app.status == 'under_review' %}
+                                    <span class="badge bg-warning text-dark">Under Review</span>
+                                {% elif app.status == 'documents_verified' %}
+                                    <span class="badge bg-primary">Docs Verified</span>
+                                {% elif app.status == 'approved' %}
+                                    <span class="badge bg-success">Approved</span>
+                                {% elif app.status == 'rejected' %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ app.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group">
+                                    <a href="{{ url_for('citizen.application_detail', application_id=app.id) }}" class="btn btn-outline-navy btn-sm fw-semibold">
+                                        <i class="fa-solid fa-eye me-1"></i> Details
+                                    </a>
+                                    {% if app.status == 'approved' %}
+                                    <a href="{{ url_for('main.certificate', application_id=app.id) }}" target="_blank" class="btn btn-success btn-sm fw-semibold">
+                                        <i class="fa-solid fa-certificate me-1"></i> Certificate
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fa-solid fa-inbox fs-1 text-muted mb-3"></i>
+                <h5 class="fw-bold text-navy">No Applications Found</h5>
+                <p class="text-muted mb-3">You haven't submitted any online service applications yet.</p>
+                <a href="{{ url_for('main.services') }}" class="btn btn-navy fw-semibold">Browse Available Services</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

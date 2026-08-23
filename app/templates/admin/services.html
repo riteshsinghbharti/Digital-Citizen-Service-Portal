@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Service Catalog Management | Admin Console{% endblock %}
+
+{% block content %}
+<div class="bg-navy text-white py-4 mb-4">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-gears text-warning me-2"></i> Service Catalog CRUD Management</h1>
+                <p class="text-white-50 mb-0">Maintain state service titles, required documents, SLA timelines, and categories.</p>
+            </div>
+            <div>
+                <a href="{{ url_for('admin.add_service') }}" class="btn btn-warning fw-bold shadow-sm">
+                    <i class="fa-solid fa-plus me-1"></i> Add New Service
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-list text-primary me-2"></i> Active Government Services Catalog</h5>
+            <span class="badge bg-navy text-white fs-7">{{ services|length }} Services</span>
+        </div>
+        <div class="card-body p-0">
+            {% if services %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 fs-7">
+                    <thead class="table-light text-uppercase text-muted">
+                        <tr>
+                            <th class="ps-4">Service Name</th>
+                            <th>Category</th>
+                            <th>Processing Time (SLA)</th>
+                            <th>Required Documents</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for srv in services %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="fa-solid {{ srv.icon }} text-navy fs-5"></i>
+                                    <div>
+                                        <strong class="text-dark fs-6">{{ srv.name }}</strong><br>
+                                        <small class="text-muted">{{ srv.description[:70] }}...</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-warning text-dark">{{ srv.category }}</span></td>
+                            <td><strong>{{ srv.processing_time }}</strong></td>
+                            <td><span class="text-muted">{{ srv.required_documents[:50] }}...</span></td>
+                            <td class="text-end pe-4">
+                                <div class="btn-group">
+                                    <a href="{{ url_for('admin.edit_service', service_id=srv.id) }}" class="btn btn-outline-navy btn-sm" title="Edit Service">
+                                        <i class="fa-solid fa-pen"></i> Edit
+                                    </a>
+                                    <form method="POST" action="{{ url_for('admin.delete_service', service_id=srv.id) }}" onsubmit="return confirm('Are you sure you want to delete service {{ srv.name }}?');" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete Service">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fa-solid fa-folder-open fs-1 text-muted mb-3"></i>
+                <h5 class="fw-bold text-navy">No Services Cataloged</h5>
+                <p class="text-muted mb-3">Click "Add New Service" to create your first government service entry.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

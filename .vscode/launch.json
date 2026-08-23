@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Digital Citizen Portal (run.py)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/run.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Seed Database (seed.py)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/seed.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}

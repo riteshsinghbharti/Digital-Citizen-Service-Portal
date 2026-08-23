@@ -1,0 +1,1 @@
+cd "C:\Users\Ritesh singh\Downloads\Projects\Digital Citizens Service Portal\new_project"; python seed.py; python run.py

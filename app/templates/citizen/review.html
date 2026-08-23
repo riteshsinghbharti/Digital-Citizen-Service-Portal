@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Review Application | Digital Citizen Portal{% endblock %}
+
+{% block content %}
+<div class="bg-navy text-white py-4 mb-4">
+    <div class="container">
+        <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-clipboard-check text-warning me-2"></i> Review Application Dossier</h1>
+        <p class="text-white-50 mb-0">Please verify all entered applicant info and uploaded documents before final submission.</p>
+    </div>
+</div>
+
+<div class="container pb-5 max-w-900">
+
+    <div class="alert alert-info border-start border-info border-4 shadow-sm mb-4">
+        <i class="fa-solid fa-circle-info me-2"></i>
+        <strong>Pre-Submission Verification:</strong> Review the details below. Click "Edit Information" to make changes or "Confirm & Submit" to generate your official Application ID.
+    </div>
+
+    <!-- Personal & Address Summary Card -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-user me-2 text-primary"></i> Applicant Personal & Address Details</h5>
+            <a href="{{ url_for('citizen.apply', service_id=service.id) }}" class="btn btn-outline-secondary btn-sm">
+                <i class="fa-solid fa-pen-to-square me-1"></i> Edit Information
+            </a>
+        </div>
+        <div class="card-body p-4">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <small class="text-muted d-block">Service Name</small>
+                    <strong class="text-dark fs-6">{{ service.name }} ({{ service.category }})</strong>
+                </div>
+                <div class="col-md-6">
+                    <small class="text-muted d-block">Expected SLA Processing Time</small>
+                    <strong class="text-dark fs-6">{{ service.processing_time }}</strong>
+                </div>
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Full Name</small>
+                    <span class="text-dark fw-semibold">{{ draft.personal_info.full_name }}</span>
+                </div>
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Date of Birth</small>
+                    <span class="text-dark fw-semibold">{{ draft.personal_info.dob }}</span>
+                </div>
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Gender</small>
+                    <span class="text-dark fw-semibold">{{ draft.personal_info.gender }}</span>
+                </div>
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Mobile Number</small>
+                    <span class="text-dark fw-semibold">{{ draft.personal_info.mobile }}</span>
+                </div>
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Email Address</small>
+                    <span class="text-dark fw-semibold">{{ draft.personal_info.email }}</span>
+                </div>
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Purpose</small>
+                    <span class="text-dark fw-semibold">{{ draft.purpose }}</span>
+                </div>
+                <div class="col-12">
+                    <small class="text-muted d-block">Full Address</small>
+                    <span class="text-dark fw-semibold">
+                        {{ draft.address_info.street_address }}, {{ draft.address_info.city }}, 
+                        District: {{ draft.address_info.district }}, State: {{ draft.address_info.state }} - {{ draft.address_info.pincode }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uploaded Documents Summary Card -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-paperclip me-2 text-primary"></i> Uploaded Verification Files</h5>
+        </div>
+        <div class="card-body p-4">
+            {% if draft.documents %}
+                <ul class="list-group list-group-flush">
+                    {% for doc in draft.documents %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+                        <div>
+                            <i class="fa-solid fa-file-pdf text-danger me-2"></i>
+                            <strong>{{ doc.doc_type }}:</strong> {{ doc.orig_name }}
+                        </div>
+                        <span class="badge bg-light text-dark border">{{ (doc.file_size / 1024)|round(1) }} KB</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted mb-0">No document files attached.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Final Submission Confirmation Form -->
+    <form method="POST" action="{{ url_for('citizen.apply_review', service_id=service.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="d-flex justify-content-between align-items-center bg-white p-4 rounded-3 border shadow-sm">
+            <a href="{{ url_for('citizen.apply', service_id=service.id) }}" class="btn btn-outline-secondary px-4">
+                <i class="fa-solid fa-pen-to-square me-1"></i> Edit Information
+            </a>
+            <button type="submit" class="btn btn-warning btn-lg fw-bold px-5 shadow">
+                <i class="fa-solid fa-paper-plane me-2"></i> Confirm & Submit Application
+            </button>
+        </div>
+    </form>
+
+</div>
+{% endblock %}

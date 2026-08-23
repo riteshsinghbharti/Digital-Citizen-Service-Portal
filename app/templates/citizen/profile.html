@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Citizen Profile | Digital Citizen Portal{% endblock %}
+
+{% block content %}
+<div class="bg-navy text-white py-4 mb-4">
+    <div class="container">
+        <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-user-gear text-warning me-2"></i> Account Profile & Settings</h1>
+        <p class="text-white-50 mb-0">Update your residential address, contact details, or change account password.</p>
+    </div>
+</div>
+
+<div class="container pb-5 max-w-900">
+    <div class="row g-4">
+        <!-- Edit Personal Info Card -->
+        <div class="col-md-7">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-address-card text-primary me-2"></i> Personal Particulars</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('citizen.profile') }}">
+                        {{ profile_form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark">{{ profile_form.name.label.text }}</label>
+                            {{ profile_form.name(class="form-control") }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark">Email Address (Read-only)</label>
+                            <input type="text" class="form-control bg-light" value="{{ current_user.email }}" readonly disabled>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark">{{ profile_form.mobile.label.text }}</label>
+                            {{ profile_form.mobile(class="form-control") }}
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">{{ profile_form.state.label.text }}</label>
+                                {{ profile_form.state(class="form-control") }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">{{ profile_form.district.label.text }}</label>
+                                {{ profile_form.district(class="form-control") }}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-dark">{{ profile_form.address.label.text }}</label>
+                            {{ profile_form.address(class="form-control", rows="3") }}
+                        </div>
+
+                        <button type="submit" name="update_profile" value="1" class="btn btn-navy fw-bold px-4">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> Update Profile
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Password Card -->
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-key text-warning me-2"></i> Security & Password</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('citizen.profile') }}">
+                        {{ password_form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark">{{ password_form.current_password.label.text }}</label>
+                            {{ password_form.current_password(class="form-control", placeholder="••••••••") }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark">{{ password_form.new_password.label.text }}</label>
+                            {{ password_form.new_password(class="form-control", placeholder="At least 6 characters") }}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-dark">{{ password_form.confirm_new_password.label.text }}</label>
+                            {{ password_form.confirm_new_password(class="form-control", placeholder="Re-enter new password") }}
+                        </div>
+
+                        <button type="submit" name="change_password" value="1" class="btn btn-warning fw-bold px-4 w-100">
+                            <i class="fa-solid fa-shield-halved me-1"></i> Update Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

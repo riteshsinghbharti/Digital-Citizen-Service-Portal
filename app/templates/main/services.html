@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Government Services Directory | Digital Citizen Portal{% endblock %}
+
+{% block content %}
+<div class="bg-navy text-white py-4 mb-4">
+    <div class="container">
+        <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-list-check text-warning me-2"></i> Government Services Directory</h1>
+        <p class="text-white-50 mb-0">Browse available state government services, required documents, and processing timelines.</p>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <!-- Filter & Search Bar -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body p-4">
+            <form method="GET" action="{{ url_for('main.services') }}" class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white text-muted border-end-0"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="text" name="q" value="{{ query }}" class="form-control border-start-0" placeholder="Search services by keyword, certificate title, or department...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select name="category" class="form-select" onchange="this.form.submit()">
+                        {% for cat in categories %}
+                            <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>
+                                Category: {{ cat }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-navy w-100 fw-semibold">Search</button>
+                    {% if query or selected_category != 'All' %}
+                        <a href="{{ url_for('main.services') }}" class="btn btn-outline-secondary" title="Reset Filters"><i class="fa-solid fa-xmark"></i></a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Filter Chips -->
+    <div class="d-flex gap-2 mb-4 overflow-auto pb-2">
+        {% for cat in categories %}
+            <a href="{{ url_for('main.services', category=cat, q=query) }}" 
+               class="btn btn-sm {% if selected_category == cat %}btn-navy fw-bold{% else %}btn-outline-secondary bg-white text-dark{% endif %} rounded-pill px-3">
+                {{ cat }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- Services Grid -->
+    {% if services %}
+        <div class="row g-4">
+            {% for service in services %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-0 shadow-sm rounded-3 hover-lift">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="service-icon-box bg-navy-subtle text-navy rounded-3 p-3 d-flex align-items-center justify-content-center" style="width:50px; height:50px;">
+                                <i class="fa-solid {{ service.icon }} fs-4"></i>
+                            </div>
+                            <div>
+                                <span class="badge bg-warning text-dark fs-8">{{ service.category }}</span>
+                                <h5 class="fw-bold text-navy mb-0 mt-1">{{ service.name }}</h5>
+                            </div>
+                        </div>
+
+                        <p class="text-muted fs-7 mb-3 flex-grow-1">{{ service.description }}</p>
+
+                        <div class="p-3 bg-light rounded-3 mb-3 border fs-7">
+                            <strong class="d-block text-dark mb-1"><i class="fa-solid fa-file-lines text-primary me-1"></i> Required Documents:</strong>
+                            <p class="text-muted mb-0">{{ service.required_documents }}</p>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center fs-7 text-muted border-top pt-3 mt-auto">
+                            <span><i class="fa-regular fa-clock me-1 text-warning"></i> SLA: <strong>{{ service.processing_time }}</strong></span>
+                            <a href="{{ url_for('citizen.apply', service_id=service.id) }}" class="btn btn-navy btn-sm fw-semibold">
+                                Apply Online <i class="fa-solid fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5 bg-white rounded-3 border shadow-sm">
+            <i class="fa-solid fa-folder-open fs-1 text-muted mb-3"></i>
+            <h4 class="fw-bold text-navy">No Services Found</h4>
+            <p class="text-muted mb-3">No government services match your current search query or category filter.</p>
+            <a href="{{ url_for('main.services') }}" class="btn btn-navy btn-sm">Clear Search Filters</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

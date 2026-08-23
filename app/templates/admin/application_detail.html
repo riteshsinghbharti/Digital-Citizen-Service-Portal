@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Review Application {{ app_record.application_number }} | Admin Console{% endblock %}
+
+{% block content %}
+<div class="bg-navy text-white py-4 mb-4">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                <span class="badge bg-warning text-dark mb-1"><i class="fa-solid fa-user-shield me-1"></i> Officer Review Mode</span>
+                <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-folder-open me-2"></i> Dossier {{ app_record.application_number }}</h1>
+                <p class="text-white-50 mb-0">Applicant: {{ app_record.user.name }} | Service: {{ app_record.service.name }}</p>
+            </div>
+            <div>
+                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-light btn-sm">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back to Queue
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5 max-w-900">
+    <div class="row g-4">
+        <!-- Application Details & Document Inspector (Left Column) -->
+        <div class="col-lg-7">
+            
+            <!-- Applicant Particulars -->
+            <div class="card border-0 shadow-sm rounded-3 mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-address-card text-primary me-2"></i> Citizen Applicant Particulars</h5>
+                </div>
+                <div class="card-body p-4 fs-7">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">Full Name</small>
+                            <strong class="text-dark fs-6">{{ app_record.user.name }}</strong>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">Mobile Number</small>
+                            <strong class="text-dark fs-6">{{ app_record.user.mobile }}</strong>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">Email Address</small>
+                            <strong class="text-dark fs-6">{{ app_record.user.email }}</strong>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">Submission Timestamp</small>
+                            <strong class="text-dark fs-6">{{ app_record.created_at.strftime('%d-%b-%Y, %I:%M %p') }}</strong>
+                        </div>
+                        <div class="col-12">
+                            <small class="text-muted d-block">Declared Purpose</small>
+                            <span class="text-dark fw-semibold">{{ app_record.purpose }}</span>
+                        </div>
+                        <div class="col-12">
+                            <small class="text-muted d-block">Residential Address</small>
+                            <span class="text-dark fw-semibold">
+                                {{ app_record.get_address_info().get('street_address', app_record.user.address) }}, 
+                                {{ app_record.get_address_info().get('city', '') }}, 
+                                District: {{ app_record.get_address_info().get('district', app_record.user.district) }}, 
+                                State: {{ app_record.get_address_info().get('state', app_record.user.state) }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uploaded Document Verification Panel -->
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-file-circle-check text-success me-2"></i> Document Verification Queue</h5>
+                </div>
+                <div class="card-body p-4">
+                    {% if documents %}
+                    <ul class="list-group list-group-flush">
+                        {% for doc in documents %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3 border-bottom">
+                            <div>
+                                <h6 class="fw-bold text-navy mb-1"><i class="fa-solid fa-file-pdf text-danger me-2"></i> {{ doc.document_type }}</h6>
+                                <small class="text-muted d-block">{{ doc.original_filename }} ({{ (doc.file_size / 1024)|round(1) }} KB)</small>
+                            </div>
+                            <a href="{{ url_for('static', filename=doc.file_path) }}" target="_blank" class="btn btn-outline-primary btn-sm fw-semibold">
+                                <i class="fa-solid fa-magnifying-glass me-1"></i> Inspect File
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted mb-0">No document files attached.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Administrative Officer Action Form (Right Column) -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-lg rounded-3 border-top border-warning border-4 sticky-top" style="top: 80px;">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-gavel text-warning me-2"></i> Officer Status & Verdict</h5>
+                </div>
+                <div class="card-body p-4">
+
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Current Dossier Status</small>
+                        <span class="badge bg-navy fs-6 px-3 py-2 mt-1">{{ app_record.status.replace('_', ' ').title() }}</span>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('admin.application_detail', application_id=app_record.id) }}">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark">{{ form.status.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.status(class="form-select form-select-lg") }}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-dark">{{ form.remarks.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.remarks(class="form-control", rows="4", placeholder="Enter official officer remarks, document verification notes, or rejection reasons...") }}
+                            <small class="text-muted">Remarks are dispatched automatically to the citizen's notification inbox.</small>
+                        </div>
+
+                        {{ form.submit(class="btn btn-warning btn-lg w-100 fw-bold shadow") }}
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

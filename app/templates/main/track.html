@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Track Application Status | Digital Citizen Portal{% endblock %}
+
+{% block content %}
+<div class="bg-navy text-white py-4 mb-4">
+    <div class="container">
+        <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-magnifying-glass-location text-warning me-2"></i> Track Application Status</h1>
+        <p class="text-white-50 mb-0">Check real-time officer verification stages, department remarks, and certificate approval.</p>
+    </div>
+</div>
+
+<div class="container pb-5 max-w-900">
+    <!-- Application ID Search Form -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body p-4">
+            <h5 class="fw-bold text-navy mb-3"><i class="fa-solid fa-barcode text-primary me-2"></i> Enter Unique Application Reference ID</h5>
+            <form method="POST" action="{{ url_for('main.track') }}" class="row g-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="col-md-9">
+                    <input type="text" name="app_id" value="{{ app_number }}" class="form-control form-control-lg text-uppercase fw-mono" 
+                           placeholder="e.g. APP-2026-10001" required pattern="APP-2026-[A-Za-z0-9]+" 
+                           title="Application ID format: APP-2026-XXXXX">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-navy btn-lg w-100 fw-bold">
+                        <i class="fa-solid fa-search me-1"></i> Track Status
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Application Search Result Dossier -->
+    {% if searched_app %}
+    <div class="card border-0 shadow-lg rounded-3 mb-4">
+        <div class="card-header bg-white py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                <span class="badge bg-secondary-subtle text-dark mb-1">{{ searched_app.service.category }}</span>
+                <h4 class="fw-bold text-navy mb-0">{{ searched_app.service.name }}</h4>
+            </div>
+            <div class="text-end">
+                <span class="text-muted fs-7 d-block">Application Number</span>
+                <span class="fw-bold text-primary fs-5 fw-mono">{{ searched_app.application_number }}</span>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <!-- Timeline Status Indicator -->
+            <h5 class="fw-bold text-navy mb-4"><i class="fa-solid fa-timeline text-warning me-2"></i> Real-Time Processing Milestone</h5>
+            
+            <div class="timeline-stepper d-flex justify-content-between position-relative mb-5 px-3">
+                {% for stage in timeline %}
+                <div class="timeline-step text-center position-relative z-1 flex-fill">
+                    <div class="step-icon rounded-circle mx-auto d-flex align-items-center justify-content-center fw-bold 
+                                {% if stage.completed %}bg-success text-white{% elif stage.active %}bg-warning text-dark ring-active{% else %}bg-light text-muted border{% endif %}"
+                         style="width: 48px; height: 48px;">
+                        {% if stage.completed %}
+                            <i class="fa-solid fa-check fs-5"></i>
+                        {% else %}
+                            {{ loop.index }}
+                        {% endif %}
+                    </div>
+                    <span class="d-block fw-semibold fs-7 mt-2 {% if stage.completed or stage.active %}text-navy{% else %}text-muted{% endif %}">
+                        {{ stage.title }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Details Summary Table -->
+            <div class="row g-3 mb-4 bg-light p-3 rounded-3 border">
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Applicant Name</small>
+                    <strong class="text-dark">{{ searched_app.user.name }}</strong>
+                </div>
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Submission Date</small>
+                    <strong class="text-dark">{{ searched_app.created_at.strftime('%d %B %Y, %I:%M %p') }}</strong>
+                </div>
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Current Status</small>
+                    {% if searched_app.status == 'approved' %}
+                        <span class="badge bg-success fs-6"><i class="fa-solid fa-circle-check me-1"></i> Approved</span>
+                    {% elif searched_app.status == 'rejected' %}
+                        <span class="badge bg-danger fs-6"><i class="fa-solid fa-circle-xmark me-1"></i> Rejected</span>
+                    {% elif searched_app.status == 'documents_verified' %}
+                        <span class="badge bg-primary fs-6"><i class="fa-solid fa-shield-check me-1"></i> Documents Verified</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark fs-6"><i class="fa-solid fa-hourglass-half me-1"></i> {{ searched_app.status.replace('_', ' ').title() }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Official Remarks Box -->
+            <div class="border-start border-warning border-4 p-3 bg-warning-subtle rounded-end mb-4">
+                <h6 class="fw-bold text-dark mb-1"><i class="fa-solid fa-user-shield me-1"></i> Latest Officer Remarks</h6>
+                <p class="mb-0 text-dark fs-7">{{ searched_app.current_remarks or "No remarks updated by officer yet." }}</p>
+            </div>
+
+            <!-- Download Certificate Action Button -->
+            {% if searched_app.status == 'approved' %}
+            <div class="p-3 bg-success-subtle border border-success rounded-3 text-center">
+                <h5 class="fw-bold text-success mb-2"><i class="fa-solid fa-certificate me-2"></i> Certificate Ready for Download</h5>
+                <p class="text-muted fs-7 mb-3">Your official digitally signed certificate has been issued by the Nodal Administrative Officer.</p>
+                <a href="{{ url_for('main.certificate', application_id=searched_app.id) }}" target="_blank" class="btn btn-success btn-lg fw-bold px-4 shadow">
+                    <i class="fa-solid fa-file-pdf me-2"></i> Download Digital Certificate
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

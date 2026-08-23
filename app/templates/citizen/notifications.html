@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications Inbox | Digital Citizen Portal{% endblock %}
+
+{% block content %}
+<div class="bg-navy text-white py-4 mb-4">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-bell text-warning me-2"></i> Citizen Notification Inbox</h1>
+            <p class="text-white-50 mb-0">System alerts, document status updates, and grievance notifications.</p>
+        </div>
+        <div>
+            <form method="POST" action="{{ url_for('citizen.notifications') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-outline-light btn-sm fw-semibold">
+                    <i class="fa-solid fa-check-double me-1"></i> Mark All as Read
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5 max-w-800">
+    {% if notifications %}
+    <div class="list-group shadow-sm rounded-3">
+        {% for notif in notifications %}
+        <div class="list-group-item p-3 border-0 border-bottom d-flex align-items-start gap-3 {% if not notif.is_read %}bg-warning-subtle border-start border-warning border-4{% endif %}">
+            <div class="icon-circle bg-navy text-warning rounded-circle p-2 d-flex align-items-center justify-content-center mt-1" style="width:40px; height:40px;">
+                <i class="fa-solid fa-bell fs-6"></i>
+            </div>
+            <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <h6 class="fw-bold text-navy mb-0">{{ notif.title }}</h6>
+                    <small class="text-muted fs-8">{{ notif.created_at.strftime('%d-%b-%Y, %I:%M %p') }}</small>
+                </div>
+                <p class="text-dark fs-7 mb-0">{{ notif.message }}</p>
+            </div>
+            {% if not notif.is_read %}
+            <a href="{{ url_for('citizen.mark_notification_read', notif_id=notif.id) }}" class="btn btn-sm btn-outline-secondary" title="Mark Read">
+                <i class="fa-solid fa-check"></i>
+            </a>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5 bg-white rounded-3 border shadow-sm">
+        <i class="fa-solid fa-bell-slash fs-1 text-muted mb-3"></i>
+        <h5 class="fw-bold text-navy">No Notifications</h5>
+        <p class="text-muted mb-0">Your alert inbox is completely clear.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

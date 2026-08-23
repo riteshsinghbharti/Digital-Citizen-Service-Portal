@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Submit Citizen Grievance | Digital Citizen Portal{% endblock %}
+
+{% block content %}
+<div class="bg-navy text-white py-4 mb-4">
+    <div class="container">
+        <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-headset text-warning me-2"></i> Citizen Grievance & Complaint Redressal</h1>
+        <p class="text-white-50 mb-0">File formal complaints regarding service delays, officer queries, or portal issues.</p>
+    </div>
+</div>
+
+<div class="container pb-5 max-w-800">
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body p-4 p-md-5">
+            <h4 class="fw-bold text-navy mb-2"><i class="fa-solid fa-file-pen text-primary me-2"></i> Grievance Registration Form</h4>
+            <p class="text-muted fs-7 mb-4">Please fill in accurate details. You will receive an official Grievance Reference ID upon submission.</p>
+
+            <form method="POST" action="{{ url_for('main.grievance') }}" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold text-dark">{{ form.citizen_name.label.text }} <span class="text-danger">*</span></label>
+                        {{ form.citizen_name(class="form-control", placeholder="Full Name") }}
+                        {% for error in form.citizen_name.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold text-dark">{{ form.citizen_email.label.text }} <span class="text-danger">*</span></label>
+                        {{ form.citizen_email(class="form-control", placeholder="email@example.com") }}
+                        {% for error in form.citizen_email.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold text-dark">{{ form.citizen_mobile.label.text }} <span class="text-danger">*</span></label>
+                        {{ form.citizen_mobile(class="form-control", placeholder="10-digit mobile number") }}
+                        {% for error in form.citizen_mobile.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold text-dark">{{ form.category.label.text }} <span class="text-danger">*</span></label>
+                        {{ form.category(class="form-select") }}
+                        {% for error in form.category.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-dark">{{ form.subject.label.text }} <span class="text-danger">*</span></label>
+                    {{ form.subject(class="form-control", placeholder="Short summary or Application Reference ID (e.g. APP-2026-XXXXX)") }}
+                    {% for error in form.subject.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-dark">{{ form.description.label.text }} <span class="text-danger">*</span></label>
+                    {{ form.description(class="form-control", rows="5", placeholder="Describe the issue, dates, application number, or officer feedback clearly...") }}
+                    {% for error in form.description.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold text-dark">{{ form.attachment.label.text }}</label>
+                    {{ form.attachment(class="form-control") }}
+                    <small class="text-muted d-block">Supported file types: PDF, JPG, PNG (Max file size: 5 MB).</small>
+                    {% for error in form.attachment.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary px-4">Cancel</a>
+                    {{ form.submit(class="btn btn-navy fw-bold px-5") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

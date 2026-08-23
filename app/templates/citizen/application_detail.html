@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Application Dossier {{ app_record.application_number }} | Digital Citizen Portal{% endblock %}
+
+{% block content %}
+<div class="bg-navy text-white py-4 mb-4">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div>
+                <span class="badge bg-warning text-dark mb-1">{{ app_record.service.category }}</span>
+                <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-folder-open me-2"></i> Application {{ app_record.application_number }}</h1>
+                <p class="text-white-50 mb-0">Service: {{ app_record.service.name }}</p>
+            </div>
+            <div>
+                <a href="{{ url_for('citizen.dashboard') }}" class="btn btn-outline-light btn-sm">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Back to Dashboard
+                </a>
+                {% if app_record.status == 'approved' %}
+                <a href="{{ url_for('main.certificate', application_id=app_record.id) }}" target="_blank" class="btn btn-success fw-bold ms-2 shadow">
+                    <i class="fa-solid fa-certificate me-1"></i> Download Certificate
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5 max-w-900">
+    <!-- Visual Progress Timeline -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body p-4">
+            <h5 class="fw-bold text-navy mb-4"><i class="fa-solid fa-route text-warning me-2"></i> Processing Milestone Timeline</h5>
+
+            <div class="timeline-stepper d-flex justify-content-between position-relative mb-4 px-3">
+                {% for stage in timeline %}
+                <div class="timeline-step text-center position-relative z-1 flex-fill">
+                    <div class="step-icon rounded-circle mx-auto d-flex align-items-center justify-content-center fw-bold 
+                                {% if stage.completed %}bg-success text-white{% elif stage.active %}bg-warning text-dark ring-active{% else %}bg-light text-muted border{% endif %}"
+                         style="width: 44px; height: 44px;">
+                        {% if stage.completed %}
+                            <i class="fa-solid fa-check fs-5"></i>
+                        {% else %}
+                            {{ loop.index }}
+                        {% endif %}
+                    </div>
+                    <span class="d-block fw-semibold fs-7 mt-2 {% if stage.completed or stage.active %}text-navy{% else %}text-muted{% endif %}">
+                        {{ stage.title }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Latest Officer Remarks -->
+            <div class="p-3 bg-light rounded-3 border border-start border-warning border-4 mt-3">
+                <strong class="text-dark d-block mb-1"><i class="fa-solid fa-comment-dots text-warning me-1"></i> Latest Department Remarks:</strong>
+                <p class="mb-0 text-dark fs-7">{{ app_record.current_remarks or "Application dossier is under process with nodal officers." }}</p>
+                <small class="text-muted d-block mt-2">Last Updated: {{ app_record.updated_at.strftime('%d %B %Y, %I:%M %p') }}</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Dossier Particulars Card -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-address-card me-2 text-primary"></i> Dossier Information Particulars</h5>
+        </div>
+        <div class="card-body p-4">
+            <div class="row g-3 fs-7">
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Applicant Name</small>
+                    <strong class="text-dark fs-6">{{ app_record.user.name }}</strong>
+                </div>
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Submission Timestamp</small>
+                    <span class="text-dark fw-semibold">{{ app_record.created_at.strftime('%d-%b-%Y, %I:%M %p') }}</span>
+                </div>
+                <div class="col-md-4">
+                    <small class="text-muted d-block">Current Status</small>
+                    <span class="badge bg-navy fs-6">{{ app_record.status.replace('_', ' ').title() }}</span>
+                </div>
+                <div class="col-md-6">
+                    <small class="text-muted d-block">Purpose of Request</small>
+                    <span class="text-dark fw-semibold">{{ app_record.purpose }}</span>
+                </div>
+                <div class="col-md-6">
+                    <small class="text-muted d-block">Expected SLA Processing</small>
+                    <span class="text-dark fw-semibold">{{ app_record.service.processing_time }}</span>
+                </div>
+                <div class="col-12">
+                    <small class="text-muted d-block">Applicant Address</small>
+                    <span class="text-dark fw-semibold">
+                        {{ app_record.get_address_info().get('street_address', app_record.user.address) }}, 
+                        {{ app_record.get_address_info().get('city', '') }}, 
+                        District: {{ app_record.get_address_info().get('district', app_record.user.district) }}, 
+                        State: {{ app_record.get_address_info().get('state', app_record.user.state) }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Uploaded Documents Attached Card -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-paperclip me-2 text-primary"></i> Attached Verification Documents</h5>
+        </div>
+        <div class="card-body p-4">
+            {% if documents %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 fs-7">
+                    <thead class="table-light text-uppercase text-muted">
+                        <tr>
+                            <th>Document Type</th>
+                            <th>Original Filename</th>
+                            <th>File Size</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doc in documents %}
+                        <tr>
+                            <td><strong>{{ doc.document_type }}</strong></td>
+                            <td><i class="fa-solid fa-file-pdf text-danger me-1"></i> {{ doc.original_filename }}</td>
+                            <td>{{ (doc.file_size / 1024)|round(1) }} KB</td>
+                            <td class="text-end">
+                                <a href="{{ url_for('static', filename=doc.file_path) }}" target="_blank" class="btn btn-outline-navy btn-sm">
+                                    <i class="fa-solid fa-download me-1"></i> View Document
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted mb-0">No documents attached to this dossier.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

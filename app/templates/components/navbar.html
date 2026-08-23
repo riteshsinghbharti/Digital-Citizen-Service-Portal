@@ -1,0 +1,94 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-navy shadow-sm sticky-top" aria-label="Main navigation">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('main.index') }}">
+            <i class="fa-solid fa-building-columns fs-3 text-warning"></i>
+            <div class="d-flex flex-column">
+                <span class="fw-bold tracking-tight text-white fs-5 leading-tight">Digital Citizen Portal</span>
+                <span class="fs-8 text-warning-light">E-Governance Services Platform</span>
+            </div>
+        </a>
+
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" 
+                aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'main.index' %}active fw-semibold{% endif %}" href="{{ url_for('main.index') }}">
+                        <i class="fa-solid fa-house me-1"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'main.services' %}active fw-semibold{% endif %}" href="{{ url_for('main.services') }}">
+                        <i class="fa-solid fa-list-check me-1"></i> Services Catalog
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'main.track' %}active fw-semibold{% endif %}" href="{{ url_for('main.track') }}">
+                        <i class="fa-solid fa-magnifying-glass-location me-1"></i> Track Application
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'main.grievance' %}active fw-semibold{% endif %}" href="{{ url_for('main.grievance') }}">
+                        <i class="fa-solid fa-comment-dots me-1"></i> File Grievance
+                    </a>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center gap-2">
+                {% if current_user.is_authenticated %}
+                    {% if current_user.is_admin() %}
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-warning btn-sm fw-semibold">
+                            <i class="fa-solid fa-user-shield me-1"></i> Admin Console
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('citizen.dashboard') }}" class="btn btn-outline-light btn-sm fw-semibold">
+                            <i class="fa-solid fa-gauge-high me-1"></i> My Dashboard
+                        </a>
+                    {% endif %}
+
+                    <!-- User Dropdown Menu -->
+                    <div class="dropdown">
+                        <button class="btn btn-navy text-white dropdown-toggle border-secondary border-opacity-50 btn-sm" type="button" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-circle-user text-warning me-1"></i> {{ current_user.name.split()[0] }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userMenu">
+                            <li>
+                                <div class="dropdown-header">
+                                    <strong>{{ current_user.name }}</strong><br>
+                                    <small class="text-muted">{{ current_user.email }}</small>
+                                </div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% if current_user.is_admin() %}
+                                <li><a class="dropdown-item" href="{{ url_for('admin.dashboard') }}"><i class="fa-solid fa-chart-line me-2 text-primary"></i> Executive Dashboard</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin.grievances') }}"><i class="fa-solid fa-headset me-2 text-warning"></i> Grievances Queue</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin.services') }}"><i class="fa-solid fa-gears me-2 text-info"></i> Manage Services</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin.users') }}"><i class="fa-solid fa-users me-2 text-success"></i> Citizens Directory</a></li>
+                            {% else %}
+                                <li><a class="dropdown-item" href="{{ url_for('citizen.dashboard') }}"><i class="fa-solid fa-folder-open me-2 text-primary"></i> My Applications</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('citizen.notifications') }}"><i class="fa-solid fa-bell me-2 text-warning"></i> Notifications</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('citizen.profile') }}"><i class="fa-solid fa-user-gear me-2 text-secondary"></i> Account Profile</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
+                                    <i class="fa-solid fa-right-from-bracket me-2"></i> Secure Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-sm px-3">
+                        <i class="fa-solid fa-right-to-bracket me-1"></i> Sign In
+                    </a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-warning btn-sm px-3 fw-semibold">
+                        <i class="fa-solid fa-user-plus me-1"></i> Register
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

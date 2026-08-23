@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Apply for {{ service.name }} | Digital Citizen Portal{% endblock %}
+
+{% block content %}
+<div class="bg-navy text-white py-4 mb-4">
+    <div class="container">
+        <span class="badge bg-warning text-dark mb-1">{{ service.category }}</span>
+        <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-file-pen me-2"></i> Application for {{ service.name }}</h1>
+        <p class="text-white-50 mb-0">Expected Processing Time: {{ service.processing_time }}</p>
+    </div>
+</div>
+
+<div class="container pb-5 max-w-900">
+
+    <!-- Progress Indicator Bar -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-bold text-navy fs-7" id="stepIndicatorLabel">Step 1 of 4: Personal Information</span>
+                <span class="badge bg-primary fs-8" id="stepPercentage">25% Completed</span>
+            </div>
+            <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" id="formProgressBar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Form Card -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body p-4 p-md-5">
+
+            <form method="POST" action="{{ url_for('citizen.apply', service_id=service.id) }}" enctype="multipart/form-data" id="multiStepForm">
+                {{ form.hidden_tag() }}
+
+                <!-- SECTION 1: Personal Information -->
+                <div class="form-step-section active" id="step1">
+                    <h5 class="fw-bold text-navy mb-3 border-bottom pb-2">
+                        <i class="fa-solid fa-user text-primary me-2"></i> 1. Applicant Personal Information
+                    </h5>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark">{{ form.full_name.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.full_name(class="form-control", placeholder="Full Name") }}
+                            {% for error in form.full_name.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark">{{ form.dob.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.dob(class="form-control", placeholder="YYYY-MM-DD") }}
+                            {% for error in form.dob.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-dark">{{ form.gender.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.gender(class="form-select") }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-dark">{{ form.mobile.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.mobile(class="form-control", placeholder="Mobile Number") }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-dark">{{ form.email.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.email(class="form-control", placeholder="Email Address") }}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="button" onclick="goToStep(2)" class="btn btn-navy fw-bold px-4">
+                            Next: Address Details <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: Address Information -->
+                <div class="form-step-section d-none" id="step2">
+                    <h5 class="fw-bold text-navy mb-3 border-bottom pb-2">
+                        <i class="fa-solid fa-location-dot text-primary me-2"></i> 2. Residential Address Details
+                    </h5>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-dark">{{ form.street_address.label.text }} <span class="text-danger">*</span></label>
+                        {{ form.street_address(class="form-control", placeholder="House No., Building Name, Street") }}
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark">{{ form.city.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.city(class="form-control", placeholder="City or Village") }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark">{{ form.district.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.district(class="form-control", placeholder="District Name") }}
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark">{{ form.state.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.state(class="form-control", placeholder="State Name") }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-dark">{{ form.pincode.label.text }} <span class="text-danger">*</span></label>
+                            {{ form.pincode(class="form-control", placeholder="6-digit PIN Code") }}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="button" onclick="goToStep(1)" class="btn btn-outline-secondary px-4">
+                            <i class="fa-solid fa-arrow-left me-1"></i> Previous
+                        </button>
+                        <button type="button" onclick="goToStep(3)" class="btn btn-navy fw-bold px-4">
+                            Next: Purpose <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: Application Details & Purpose -->
+                <div class="form-step-section d-none" id="step3">
+                    <h5 class="fw-bold text-navy mb-3 border-bottom pb-2">
+                        <i class="fa-solid fa-file-lines text-primary me-2"></i> 3. Application Purpose & Details
+                    </h5>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-dark">{{ form.purpose.label.text }} <span class="text-danger">*</span></label>
+                        {{ form.purpose(class="form-control", placeholder="e.g. Higher Education Admission / Scholarship / Property Registration") }}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-dark">{{ form.additional_info.label.text }}</label>
+                        {{ form.additional_info(class="form-control", rows="3", placeholder="Any additional information or notes for the reviewing officer...") }}
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="button" onclick="goToStep(2)" class="btn btn-outline-secondary px-4">
+                            <i class="fa-solid fa-arrow-left me-1"></i> Previous
+                        </button>
+                        <button type="button" onclick="goToStep(4)" class="btn btn-navy fw-bold px-4">
+                            Next: Upload Documents <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SECTION 4: Required Document Uploads -->
+                <div class="form-step-section d-none" id="step4">
+                    <h5 class="fw-bold text-navy mb-3 border-bottom pb-2">
+                        <i class="fa-solid fa-cloud-arrow-up text-primary me-2"></i> 4. Upload Verification Documents
+                    </h5>
+                    <p class="text-muted fs-7 mb-3">Attach required scanned document files in <strong>PDF, JPG, or PNG</strong> format (Max size: 5 MB each).</p>
+
+                    <div class="mb-3 p-3 bg-light rounded-3 border">
+                        <label class="form-label fw-semibold text-dark">{{ form.id_proof.label.text }} <span class="text-danger">*</span></label>
+                        {{ form.id_proof(class="form-control") }}
+                        {% for error in form.id_proof.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                    </div>
+
+                    <div class="mb-3 p-3 bg-light rounded-3 border">
+                        <label class="form-label fw-semibold text-dark">{{ form.address_proof.label.text }} <span class="text-danger">*</span></label>
+                        {{ form.address_proof(class="form-control") }}
+                        {% for error in form.address_proof.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                    </div>
+
+                    <div class="mb-4 p-3 bg-light rounded-3 border">
+                        <label class="form-label fw-semibold text-dark">{{ form.supporting_doc.label.text }}</label>
+                        {{ form.supporting_doc(class="form-control") }}
+                        {% for error in form.supporting_doc.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button type="button" onclick="goToStep(3)" class="btn btn-outline-secondary px-4">
+                            <i class="fa-solid fa-arrow-left me-1"></i> Previous
+                        </button>
+                        {{ form.submit(class="btn btn-warning btn-lg fw-bold px-5 shadow") }}
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function goToStep(stepNum) {
+    // Hide all sections
+    document.querySelectorAll('.form-step-section').forEach(el => el.classList.add('d-none'));
+    // Show target section
+    const currentSection = document.getElementById('step' + stepNum);
+    if (currentSection) {
+        currentSection.classList.remove('d-none');
+    }
+
+    // Update progress bar
+    const bar = document.getElementById('formProgressBar');
+    const label = document.getElementById('stepIndicatorLabel');
+    const percentage = document.getElementById('stepPercentage');
+
+    const pct = stepNum * 25;
+    bar.style.width = pct + '%';
+    bar.setAttribute('aria-valuenow', pct);
+    percentage.innerText = pct + '% Completed';
+
+    const stepTitles = {
+        1: 'Step 1 of 4: Personal Information',
+        2: 'Step 2 of 4: Address Details',
+        3: 'Step 3 of 4: Application Purpose',
+        4: 'Step 4 of 4: Document Uploads'
+    };
+    label.innerText = stepTitles[stepNum];
+
+    window.scrollTo({ top: 150, behavior: 'smooth' });
+}
+</script>
+{% endblock %}

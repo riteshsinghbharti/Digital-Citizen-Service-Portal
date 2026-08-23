@@ -1,0 +1,101 @@
+/* Digital Citizen Service Portal - Custom Stylesheet */
+:root {
+    --navy-primary: #0f2c59;
+    --navy-hover: #0a1f40;
+    --gov-yellow: #ffb703;
+    --gov-yellow-hover: #fb8500;
+    --bg-light: #f8f9fa;
+    --font-inter: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    font-family: var(--font-inter);
+    color: #2b2d42;
+    background-color: var(--bg-light);
+}
+
+/* Accessibility Focus States */
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 3px solid var(--gov-yellow) !important;
+    outline-offset: 2px;
+}
+
+.skip-link:focus {
+    top: 0 !important;
+    left: 0 !important;
+}
+
+/* Custom Brand Color Palette */
+.bg-navy {
+    background-color: var(--navy-primary) !important;
+}
+
+.text-navy {
+    color: var(--navy-primary) !important;
+}
+
+.bg-navy-subtle {
+    background-color: #e8eef7 !important;
+}
+
+.btn-navy {
+    background-color: var(--navy-primary);
+    color: #ffffff;
+    border: 1px solid var(--navy-primary);
+}
+
+.btn-navy:hover, .btn-navy:focus {
+    background-color: var(--navy-hover);
+    color: #ffffff;
+    border-color: var(--navy-hover);
+}
+
+.btn-outline-navy {
+    color: var(--navy-primary);
+    border-color: var(--navy-primary);
+}
+
+.btn-outline-navy:hover {
+    background-color: var(--navy-primary);
+    color: #ffffff;
+}
+
+.text-warning-light {
+    color: #ffe082;
+}
+
+.hover-lift {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(15, 44, 89, 0.12) !important;
+}
+
+.font-monospace {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
+
+.max-w-700 { max-width: 700px; }
+.max-w-800 { max-width: 800px; }
+.max-w-900 { max-width: 900px; }
+
+/* Timeline Stepper UI */
+.timeline-stepper::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    left: 10%;
+    right: 10%;
+    height: 4px;
+    background-color: #dee2e6;
+    z-index: 0;
+}
+
+.step-icon.ring-active {
+    box-shadow: 0 0 0 4px rgba(255, 183, 3, 0.4);
+}
+
+.fs-7 { font-size: 0.875rem; }
+.fs-8 { font-size: 0.75rem; }

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Citizen Registration | Digital Citizen Portal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-8">
+
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <div class="icon-circle bg-navy text-warning rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:60px; height:60px;">
+                            <i class="fa-solid fa-user-plus fs-3"></i>
+                        </div>
+                        <h3 class="fw-bold text-navy">New Citizen Account Registration</h3>
+                        <p class="text-muted fs-7">Register to apply for official state certificates and track applications</p>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('auth.register') }}">
+                        {{ form.hidden_tag() }}
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">{{ form.name.label.text }} <span class="text-danger">*</span></label>
+                                {{ form.name(class="form-control", placeholder="Full Name (as on Aadhaar)") }}
+                                {% for error in form.name.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">{{ form.email.label.text }} <span class="text-danger">*</span></label>
+                                {{ form.email(class="form-control", placeholder="name@example.com") }}
+                                {% for error in form.email.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">{{ form.mobile.label.text }} <span class="text-danger">*</span></label>
+                                {{ form.mobile(class="form-control", placeholder="10-digit mobile number") }}
+                                {% for error in form.mobile.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">{{ form.state.label.text }} <span class="text-danger">*</span></label>
+                                {{ form.state(class="form-select") }}
+                                {% for error in form.state.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">{{ form.district.label.text }} <span class="text-danger">*</span></label>
+                                {{ form.district(class="form-control", placeholder="District / City Name") }}
+                                {% for error in form.district.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">{{ form.address.label.text }} <span class="text-danger">*</span></label>
+                                {{ form.address(class="form-control", rows="1", placeholder="House/Flat No, Street, Landmark") }}
+                                {% for error in form.address.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">{{ form.password.label.text }} <span class="text-danger">*</span></label>
+                                {{ form.password(class="form-control", placeholder="At least 6 characters") }}
+                                {% for error in form.password.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark">{{ form.confirm_password.label.text }} <span class="text-danger">*</span></label>
+                                {{ form.confirm_password(class="form-control", placeholder="Re-enter password") }}
+                                {% for error in form.confirm_password.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check">
+                                {{ form.agree_terms(class="form-check-input") }}
+                                <label class="form-check-label fs-7 text-muted" for="agree_terms">
+                                    I confirm that the details provided above are true and correct. I accept the <a href="#" class="text-navy">Portal Terms & Privacy Policy</a>.
+                                </label>
+                            </div>
+                            {% for error in form.agree_terms.errors %}<small class="text-danger d-block">{{ error }}</small>{% endfor %}
+                        </div>
+
+                        {{ form.submit(class="btn btn-navy btn-lg w-100 fw-bold mb-3") }}
+
+                        <div class="text-center fs-7 text-muted">
+                            Already registered? 
+                            <a href="{{ url_for('auth.login') }}" class="fw-bold text-navy text-decoration-none">Sign In Here</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

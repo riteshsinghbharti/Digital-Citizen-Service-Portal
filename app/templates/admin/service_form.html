@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | Admin Console{% endblock %}
+
+{% block content %}
+<div class="bg-navy text-white py-4 mb-4">
+    <div class="container">
+        <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-gears text-warning me-2"></i> {{ title }}</h1>
+        <p class="text-white-50 mb-0">Configure service metadata, SLA processing window, and document verification rules.</p>
+    </div>
+</div>
+
+<div class="container pb-5 max-w-800">
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-body p-4 p-md-5">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-dark">{{ form.name.label.text }} <span class="text-danger">*</span></label>
+                    {{ form.name(class="form-control", placeholder="e.g. Income Certificate") }}
+                    {% for error in form.name.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold text-dark">{{ form.category.label.text }} <span class="text-danger">*</span></label>
+                        {{ form.category(class="form-select") }}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold text-dark">{{ form.processing_time.label.text }} <span class="text-danger">*</span></label>
+                        {{ form.processing_time(class="form-control", placeholder="e.g. 7 Working Days") }}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-dark">{{ form.icon.label.text }} <span class="text-danger">*</span></label>
+                    {{ form.icon(class="form-control", placeholder="fa-file-invoice") }}
+                    <small class="text-muted">Supports FontAwesome 6 icons (e.g. fa-certificate, fa-person-cane, fa-id-card, fa-landmark).</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-dark">{{ form.description.label.text }} <span class="text-danger">*</span></label>
+                    {{ form.description(class="form-control", rows="3", placeholder="Detailed explanation of the government service...") }}
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold text-dark">{{ form.required_documents.label.text }} <span class="text-danger">*</span></label>
+                    {{ form.required_documents(class="form-control", rows="3", placeholder="Identity proof (Aadhaar), Address proof, Income slip...") }}
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ url_for('admin.services') }}" class="btn btn-outline-secondary px-4">Cancel</a>
+                    {{ form.submit(class="btn btn-navy fw-bold px-4") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

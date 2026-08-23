@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Grievances Redressal Queue | Admin Console{% endblock %}
+
+{% block content %}
+<div class="bg-navy text-white py-4 mb-4">
+    <div class="container">
+        <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-headset text-warning me-2"></i> Citizen Grievances Redressal Queue</h1>
+        <p class="text-white-50 mb-0">Review public complaints, respond with official remarks, and update resolution status.</p>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <!-- Filter Tabs -->
+    <div class="d-flex gap-2 mb-4">
+        <a href="{{ url_for('admin.grievances') }}" class="btn btn-sm {% if not status_filter %}btn-navy fw-bold{% else %}btn-outline-secondary bg-white text-dark{% endif %} rounded-pill px-3">All Grievances</a>
+        <a href="{{ url_for('admin.grievances', status='open') }}" class="btn btn-sm {% if status_filter == 'open' %}btn-danger fw-bold{% else %}btn-outline-secondary bg-white text-dark{% endif %} rounded-pill px-3">Open Complaints</a>
+        <a href="{{ url_for('admin.grievances', status='in_progress') }}" class="btn btn-sm {% if status_filter == 'in_progress' %}btn-warning fw-bold{% else %}btn-outline-secondary bg-white text-dark{% endif %} rounded-pill px-3">In Progress</a>
+        <a href="{{ url_for('admin.grievances', status='resolved') }}" class="btn btn-sm {% if status_filter == 'resolved' %}btn-success fw-bold{% else %}btn-outline-secondary bg-white text-dark{% endif %} rounded-pill px-3">Resolved</a>
+    </div>
+
+    <!-- Grievances Table Card -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-comments text-primary me-2"></i> Grievances Registry</h5>
+            <span class="badge bg-navy text-white fs-7">{{ grievances|length }} Grievances</span>
+        </div>
+        <div class="card-body p-0">
+            {% if grievances %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 fs-7">
+                    <thead class="table-light text-uppercase text-muted">
+                        <tr>
+                            <th class="ps-4">Reference ID</th>
+                            <th>Citizen Name</th>
+                            <th>Category & Subject</th>
+                            <th>Filed Timestamp</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grv in grievances %}
+                        <tr>
+                            <td class="ps-4 font-monospace fw-bold text-primary">{{ grv.grievance_number }}</td>
+                            <td>
+                                <strong>{{ grv.citizen_name }}</strong><br>
+                                <small class="text-muted">{{ grv.citizen_email }} | {{ grv.citizen_mobile }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary-subtle text-dark">{{ grv.category }}</span><br>
+                                <strong class="text-dark">{{ grv.subject[:60] }}</strong>
+                            </td>
+                            <td>{{ grv.created_at.strftime('%d-%b-%Y, %I:%M %p') }}</td>
+                            <td>
+                                {% if grv.status == 'open' %}
+                                    <span class="badge bg-danger">Open</span>
+                                {% elif grv.status == 'in_progress' %}
+                                    <span class="badge bg-warning text-dark">In Progress</span>
+                                {% elif grv.status == 'resolved' %}
+                                    <span class="badge bg-success">Resolved</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ grv.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-4">
+                                <a href="{{ url_for('admin.grievance_detail', grievance_id=grv.id) }}" class="btn btn-navy btn-sm fw-semibold">
+                                    <i class="fa-solid fa-reply me-1"></i> Resolve / Respond
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fa-solid fa-check-double fs-1 text-muted mb-3"></i>
+                <h5 class="fw-bold text-navy">No Grievances Found</h5>
+                <p class="text-muted mb-0">No citizen complaints currently match the selected status filter.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

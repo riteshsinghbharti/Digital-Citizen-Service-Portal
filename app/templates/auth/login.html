@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In | Digital Citizen Portal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6 col-xl-5">
+
+            <!-- Demo Account Quick Login Card -->
+            <div class="card border-0 shadow-sm rounded-3 mb-4 bg-warning-subtle border-start border-warning border-4">
+                <div class="card-body p-3">
+                    <h6 class="fw-bold text-dark mb-2"><i class="fa-solid fa-key me-1"></i> Demo Access Credentials</h6>
+                    <div class="d-flex gap-2">
+                        <button type="button" onclick="fillLogin('citizen@gmail.com', 'Citizen@123')" class="btn btn-outline-dark btn-sm flex-fill">
+                            <i class="fa-solid fa-user me-1"></i> Citizen Demo
+                        </button>
+                        <button type="button" onclick="fillLogin('admin@gov.in', 'Admin@123')" class="btn btn-navy btn-sm flex-fill">
+                            <i class="fa-solid fa-user-shield me-1"></i> Admin Demo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login Form Card -->
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-body p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <div class="icon-circle bg-navy text-warning rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:60px; height:60px;">
+                            <i class="fa-solid fa-lock fs-3"></i>
+                        </div>
+                        <h3 class="fw-bold text-navy">Portal Account Sign In</h3>
+                        <p class="text-muted fs-7">Access citizen services, application dossiers, and alert inbox</p>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('auth.login') }}">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-dark">{{ form.email.label.text }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted"><i class="fa-solid fa-envelope"></i></span>
+                                {{ form.email(class="form-control form-control-lg", id="loginEmail", placeholder="email@domain.com or mobile") }}
+                            </div>
+                            {% for error in form.email.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <label class="form-label fw-semibold text-dark">{{ form.password.label.text }}</label>
+                                <a href="#" onclick="alert('Forgot password feature: Contact portal administrator or use citizen support helpline.')" class="fs-7 text-decoration-none text-navy">Forgot Password?</a>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted"><i class="fa-solid fa-key"></i></span>
+                                {{ form.password(class="form-control form-control-lg", id="loginPassword", placeholder="••••••••") }}
+                            </div>
+                            {% for error in form.password.errors %}<small class="text-danger">{{ error }}</small>{% endfor %}
+                        </div>
+
+                        <div class="mb-4 d-flex justify-content-between align-items-center">
+                            <div class="form-check">
+                                {{ form.remember(class="form-check-input") }}
+                                <label class="form-check-label fs-7 text-muted" for="remember">{{ form.remember.label.text }}</label>
+                            </div>
+                        </div>
+
+                        {{ form.submit(class="btn btn-navy btn-lg w-100 fw-bold mb-3") }}
+
+                        <div class="text-center fs-7 text-muted">
+                            Don't have a citizen account yet? 
+                            <a href="{{ url_for('auth.register') }}" class="fw-bold text-navy text-decoration-none">Create Account</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function fillLogin(email, pwd) {
+    document.getElementById('loginEmail').value = email;
+    document.getElementById('loginPassword').value = pwd;
+}
+</script>
+{% endblock %}

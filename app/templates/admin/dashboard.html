@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Executive Admin Dashboard | Digital Citizen Portal{% endblock %}
+
+{% block content %}
+<div class="bg-navy text-white py-4 mb-4">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <span class="badge bg-warning text-dark mb-1"><i class="fa-solid fa-user-shield me-1"></i> Nodal Officer Control Panel</span>
+                <h1 class="h3 fw-bold mb-1"><i class="fa-solid fa-chart-line text-warning me-2"></i> Executive Dashboard</h1>
+                <p class="text-white-50 mb-0">Overview of registered citizens, application verification queue, and grievance redressal.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('admin.services') }}" class="btn btn-outline-light btn-sm fw-semibold">
+                    <i class="fa-solid fa-gears me-1"></i> Catalog Management
+                </a>
+                <a href="{{ url_for('admin.grievances') }}" class="btn btn-warning btn-sm fw-bold">
+                    <i class="fa-solid fa-headset me-1"></i> Open Grievances ({{ open_grievances }})
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <!-- Executive Statistics Metric Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-2">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white text-center h-100 border-start border-primary border-4">
+                <span class="text-muted fs-8 fw-semibold text-uppercase">Total Citizens</span>
+                <h3 class="fw-bold text-primary mb-0 mt-1">{{ total_citizens }}</h3>
+            </div>
+        </div>
+        <div class="col-6 col-lg-2">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white text-center h-100">
+                <span class="text-muted fs-8 fw-semibold text-uppercase">Total Dossiers</span>
+                <h3 class="fw-bold text-navy mb-0 mt-1">{{ total_applications }}</h3>
+            </div>
+        </div>
+        <div class="col-6 col-lg-2">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white text-center h-100 border-start border-info border-4">
+                <span class="text-muted fs-8 fw-semibold text-uppercase">Submitted</span>
+                <h3 class="fw-bold text-info mb-0 mt-1">{{ pending_apps }}</h3>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white text-center h-100 border-start border-success border-4">
+                <span class="text-muted fs-8 fw-semibold text-uppercase">Approved</span>
+                <h3 class="fw-bold text-success mb-0 mt-1">{{ approved_apps }}</h3>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white text-center h-100 border-start border-danger border-4">
+                <span class="text-muted fs-8 fw-semibold text-uppercase">Open Grievances</span>
+                <h3 class="fw-bold text-danger mb-0 mt-1">{{ open_grievances }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Queue Filters & Search -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body p-4">
+            <form method="GET" action="{{ url_for('admin.dashboard') }}" class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white text-muted border-end-0"><i class="fa-solid fa-search"></i></span>
+                        <input type="text" name="q" value="{{ search_query }}" class="form-control border-start-0" placeholder="Search by Application ID, Citizen Name, or Service Title...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select name="status" class="form-select" onchange="this.form.submit()">
+                        <option value="">Filter Status: All Applications</option>
+                        <option value="submitted" {% if status_filter == 'submitted' %}selected{% endif %}>Submitted (New)</option>
+                        <option value="under_review" {% if status_filter == 'under_review' %}selected{% endif %}>Under Review</option>
+                        <option value="documents_verified" {% if status_filter == 'documents_verified' %}selected{% endif %}>Documents Verified</option>
+                        <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>Approved</option>
+                        <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-navy w-100 fw-semibold">Filter</button>
+                    {% if search_query or status_filter %}
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary" title="Reset Filters"><i class="fa-solid fa-xmark"></i></a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Master Applications Dossier Queue Table -->
+    <div class="card border-0 shadow-sm rounded-3">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-list-check text-primary me-2"></i> Application Dossiers Review Queue</h5>
+            <span class="badge bg-navy text-white fs-7">{{ applications|length }} Dossiers</span>
+        </div>
+        <div class="card-body p-0">
+            {% if applications %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 fs-7">
+                    <thead class="table-light text-uppercase text-muted">
+                        <tr>
+                            <th class="ps-4">Application ID</th>
+                            <th>Citizen Applicant</th>
+                            <th>Service Title</th>
+                            <th>Submitted Date</th>
+                            <th>Status Stage</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in applications %}
+                        <tr>
+                            <td class="ps-4">
+                                <span class="fw-bold text-primary font-monospace">{{ app.application_number }}</span>
+                            </td>
+                            <td>
+                                <strong>{{ app.user.name }}</strong><br>
+                                <small class="text-muted"><i class="fa-solid fa-phone me-1"></i> {{ app.user.mobile }}</small>
+                            </td>
+                            <td>
+                                <span class="fw-semibold text-dark">{{ app.service.name }}</span><br>
+                                <small class="text-muted">{{ app.service.category }}</small>
+                            </td>
+                            <td>{{ app.created_at.strftime('%d-%b-%Y, %I:%M %p') }}</td>
+                            <td>
+                                {% if app.status == 'submitted' %}
+                                    <span class="badge bg-info text-dark">Submitted</span>
+                                {% elif app.status == 'under_review' %}
+                                    <span class="badge bg-warning text-dark">Under Review</span>
+                                {% elif app.status == 'documents_verified' %}
+                                    <span class="badge bg-primary">Docs Verified</span>
+                                {% elif app.status == 'approved' %}
+                                    <span class="badge bg-success">Approved</span>
+                                {% elif app.status == 'rejected' %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ app.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-4">
+                                <a href="{{ url_for('admin.application_detail', application_id=app.id) }}" class="btn btn-navy btn-sm fw-semibold">
+                                    <i class="fa-solid fa-user-gear me-1"></i> Review Dossier
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fa-solid fa-inbox fs-1 text-muted mb-3"></i>
+                <h5 class="fw-bold text-navy">No Applications Found</h5>
+                <p class="text-muted mb-0">No application dossiers match your search or status filter criteria.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
