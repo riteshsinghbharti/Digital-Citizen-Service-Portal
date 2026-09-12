@@ -1,5 +1,14 @@
 # Digital Citizen Service Portal — E-Governance & Digital Services Platform
-
+Student Name: Ritesh Singh Bharti
+Enrollment Number: 25scs1003005661
+Program: B.Tech Computer Science & Engineering
+Semester: 3rd Semester
+Institution: IILM University, Greater Noida, Uttar Pradesh
+Internship Organization: YuvaIntern
+Internship Role: Junior Web Developer – E-Governance & Digital Services
+Internship Duration: 01 August 2026 – 29 August 2026
+Duration: 4 Weeks
+Mode: Remote
 > **B.Tech CSE Internship Project**  
 > **Role:** Full-Stack Web Developer – E-Governance Platform  
 > **Tech Stack:** Python 3.13, Flask, SQLite with SQLAlchemy ORM, Flask-Login, Flask-WTF, Bootstrap 5.3, HTML5, CSS3, JavaScript
