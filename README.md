@@ -11,27 +11,18 @@ An end-to-end, production-style, responsive e-governance web application develop
 
 ## 🏛️ Internship & Student Metadata
 
+Here is the student and internship metadata organized cleanly in Markdown table format:
+
 | Parameter | Details |
-
+| --- | --- |
 | **Student Name** | Ritesh Singh Bharti |
-
 | **Enrollment Number** | 25scs1003005661 |
-
 | **Academic Program** | B.Tech in Computer Science & Engineering |
-
 | **Semester** | 3rd Semester |
-
 | **Academic Institution** | IILM University, Greater Noida, Uttar Pradesh, India |
-
 | **Internship Organization** | YuvaIntern |
-
 | **Internship Role** | Junior Web Developer – E-Governance & Digital Services |
-
 | **Internship Period** | 01 August 2026 – 29 August 2026 (4 Weeks) |
-
-| **Execution Mode** | Remote |
-
-| **Project Domain** | E-Governance & Digital Public Infrastructure |
 
 ---
 
